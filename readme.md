@@ -64,7 +64,7 @@ Configuration can be done using the Administrator section of your Magento store.
 
 ## Screenshots ##
 
-![Configuration Screenshot](https://cloud.githubusercontent.com/assets/8383666/22682872/94bc80d4-ed15-11e6-9b9a-b46d811e15f8.png)
+![Configuration Screenshot](https://cloud.githubusercontent.com/assets/8383666/22692659/43c987f0-ed40-11e6-9b7c-c25b9576556e.png)
 
 
 ### Suggestions / Contributions

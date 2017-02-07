@@ -22,21 +22,22 @@
       if ( ! empty($txn->data) && $txn->data->status === 'successful' ) {
         $txref = $txn->data->tx_ref;
         $tx_ref_arr = explode('_', $txref);
-        $txn_order_id = $tx_ref_arr[1];
+        $txn_order_id = (int) $tx_ref_arr[1];
         $orderId = Mage::getSingleton('checkout/session')->getLastRealOrderId();
         $order = Mage::getModel('sales/order')->loadByIncrementId($orderId);
+        $order_id = (int) $order->getId();
         $order_amount = number_format($order->getGrandTotal(), 2);
-        $tx_amount = number_format($tx->data->amount, 2);
+        $tx_amount = number_format($txn->data->amount, 2);
 
         if ( $order_amount !== $tx_amount ) {
           $comment = "<strong>Payment Successful</strong><br>"
-                    ."Attention: New order has been placed on pending because of incorrect payment amount. Please, look into it. <br>"
+                    ."Attention: New order has been placed on hold because of incorrect payment amount. Please, look into it. <br>"
                     ."Amount paid: $tx_amount <br> Order amount: $order_amount <br> Ref:</strong> $txref";
           $order->setState( Mage_Sales_Model_Order::STATE_HOLDED, true, $comment );
         } elseif ($txn_order_id === $order->getId()) {
           $comment = "<strong>Payment Successful</strong><br>"
-                    ."Attention: New order has been placed on pending because payment was made for a different order. Please, look into it. <br>"
-                    ."Order id paid for: $txn_order_id <br> Current order: $order->getId() <br> Ref:</strong> $txref";
+                    ."Attention: New order has been placed on hold because payment was made for a different order. Please, look into it. <br>"
+                    ."Order id paid for: $txn_order_id <br> Current order: $order_id <br> Ref:</strong> $txref";
           $order->setState( Mage_Sales_Model_Order::STATE_HOLDED, true, $comment );
         } else {
           $comment = '<strong>Payment Successful</strong><br><strong>Transaction ref:</strong> ' . $txref;
