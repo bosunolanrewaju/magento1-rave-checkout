@@ -1,0 +1,97 @@
+<?php
+  $paymentMethod = Mage::getModel('ravecheckout/paymentmethod');
+  $pbkey = $paymentMethod->getConfigData('public_key');
+
+  // $cart = Mage::helper('checkout/cart');
+
+  $order = new Mage_Sales_Model_Order();
+  $orderId = Mage::getSingleton('checkout/session')->getLastRealOrderId();
+  $order->loadByIncrementId($orderId);
+
+  $amount = $order->getGrandTotal();
+  $customer = $order->getCustomerEmail();
+
+  $cartUrl = Mage::getUrl('checkout/cart', array('_secure' => false));
+
+?>
+
+<script type="text/javascript" defer=true>
+  //<![CDATA[
+
+  var processed = false;
+
+  var buildConfig = function() {
+    return {
+      amount: '<?php echo $amount; ?>',
+      country: '',
+      currency: '',
+      custom_description: '',
+      custom_logo: '',
+      custom_title: '',
+      customer_email: '<?php echo $customer; ?>',
+      PBFPubKey: '<?php echo $pbkey; ?>',
+      txref: '<?php echo "MAGE1_" . $order->getId() . "_" . time() ?>',
+      onclose: function() {
+        if ( ! processed ) {
+
+        }
+      },
+      callback: function(res) {
+        sendOrderResponse(res);
+      }
+    };
+  };
+
+  var sendOrderResponse = function(res) {
+    processed = true;
+    var data = res.tx,
+        args = {
+          responseCode: ( data.paymentType === 'account' ) ? data.acctvalrespcode : data.vbvrespcode,
+          txRef: data.txRef,
+          orderId: '<?php echo $orderId; ?>'
+        };
+
+    submitOrderForm(args);
+  };
+
+  var submitOrderForm = function(data) {
+    var form = createDOMElement( 'form', {method: 'post', action: "<?php echo Mage::helper('ravecheckout')->getPaymentProcessUrl(); ?>" } );
+    form.appendChild(createDOMElement('input', {name: 'txRef', value: data.txRef}));
+    delete localStorage.reviewSaved;
+    form.submit();
+  };
+
+
+  var processPayment = function() {
+    console.log('inside');
+    var config = buildConfig();
+    getpaidSetup(config);
+  };
+
+  /** Creates element to be attached to the DOM */
+  var createDOMElement = function(type, attrObj) {
+    var elementAttr = attrObj || {};
+    var element = document.createElement(type);
+
+    if (Object.keys(elementAttr).length > 0) {
+      for( var attr in elementAttr) {
+        if (elementAttr.hasOwnProperty(attr)) {
+          element.setAttribute( attr, elementAttr[attr] );
+        }
+      }
+    }
+
+    return element;
+  };
+
+  if ( localStorage.reviewSaved && ! processed ) {
+    setTimeout(function(){ processPayment(); }, 500);
+  } else {
+    location.href = '<?php echo $cartUrl; ?>';
+  }
+
+//]]>
+</script>
+
+<h1>Your order is pending.</h1>
+<h2>Loading payment gateway...</h2>

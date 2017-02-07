@@ -1,0 +1,59 @@
+<?xml version="1.0"?>
+<config>
+  <modules>
+    <Rave_Ravecheckout>
+      <version>0.1.0</version>
+    </Rave_Ravecheckout>
+  </modules>
+
+  <global>
+    <helpers>
+      <ravecheckout>
+        <class>Rave_Ravecheckout_Helper</class>
+      </ravecheckout>
+    </helpers>
+    <models>
+      <ravecheckout>
+        <class>Rave_Ravecheckout_Model</class>
+      </ravecheckout>
+    </models>
+    <resources>
+      <ravecheckout_setup>
+        <setup>
+          <module>Rave_Ravecheckout</module>
+        </setup>
+      </ravecheckout_setup>
+    </resources>
+  </global>
+
+  <default>
+    <payment>
+      <ravecheckout>
+        <active>1</active>
+        <model>ravecheckout/paymentMethod</model>
+        <order_status>pending</order_status>
+        <title>Rave Ravecheckout</title>
+      </ravecheckout>
+    </payment>
+  </default>
+
+  <frontend>
+    <routers>
+      <ravecheckout>
+        <use>standard</use>
+        <args>
+          <module>Rave_Ravecheckout</module>
+          <frontName>ravecheckout</frontName>
+        </args>
+      </ravecheckout>
+    </routers>
+    <layout>
+      <updates>
+        <ravecheckout>
+          <file>ravecheckout.xml</file>
+        </ravecheckout>
+      </updates>
+    </layout>
+  </frontend>
+</config>
+

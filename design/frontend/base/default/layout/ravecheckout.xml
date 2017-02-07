@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<layout version="0.1.0">
+  <default>
+    <reference name="head">
+      <block type="core/text" name="flwpbf-inline">
+        <action method="setText">
+          <text>
+             <![CDATA[<script flwjs type="text/javascript" src="//flw-pms-dev.eu-west-1.elasticbeanstalk.com/flwv3-pug/getpaidx/api/flwpbf-inline.js"></script>]]>
+          </text>
+        </action>
+      </block>
+    </reference>
+  </default>
+  <checkout_onepage_review>
+    <reference name="checkout.onepage.review.button">
+      <action method="setTemplate">
+        <template helper="ravecheckout/review/getRavePlaceOrderButtonTemplate">
+          <name>ravecheckout/review/button.phtml</name>
+          <block>checkout.onepage.review.button</block>
+        </template>
+      </action>
+    </reference>
+  </checkout_onepage_review>
+
+</layout>
