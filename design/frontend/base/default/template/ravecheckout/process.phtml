@@ -1,8 +1,11 @@
 <?php
   $paymentMethod = Mage::getModel('ravecheckout/paymentmethod');
   $pbkey = $paymentMethod->getConfigData('public_key');
-
-  // $cart = Mage::helper('checkout/cart');
+  $title = $paymentMethod->getConfigData('modal_title');
+  $desc = $paymentMethod->getConfigData('modal_desc');
+  $currency = $paymentMethod->getConfigData('currency');
+  $country = $paymentMethod->getConfigData('country');
+  $logo = $paymentMethod->getConfigData('logo');
 
   $order = new Mage_Sales_Model_Order();
   $orderId = Mage::getSingleton('checkout/session')->getLastRealOrderId();
@@ -19,21 +22,33 @@
   //<![CDATA[
 
   var processed = false;
+  var orderExists = '<?php echo isset($orderId) ?>';
 
   var buildConfig = function() {
     return {
       amount: '<?php echo $amount; ?>',
-      country: '',
-      currency: '',
-      custom_description: '',
-      custom_logo: '',
-      custom_title: '',
+      country: '<?php echo $country; ?>',
+      currency: '<?php echo $currency; ?>',
+      custom_description: '<?php echo $desc; ?>',
+      custom_logo: '<?php echo $logo ?>',
+      custom_title: '<?php echo $title; ?>',
       customer_email: '<?php echo $customer; ?>',
       PBFPubKey: '<?php echo $pbkey; ?>',
       txref: '<?php echo "MAGE1_" . $order->getId() . "_" . time() ?>',
       onclose: function() {
-        if ( ! processed ) {
+        if ( localStorage.reviewSaved && ! processed ) {
+          processed = true;
+          var h2 = document.getElementById('status-text');
+          var button = createDOMElement('button', {id: 'pay-button', class: 'button'});
+          var h2Container = h2.parentNode;
 
+          h2.innerHTML = 'Payment has not been received';
+          button.innerHTML = 'PAY NOW';
+          h2Container.appendChild(button);
+
+          button.addEventListener('click', function() {
+            processPayment();
+          });
         }
       },
       callback: function(res) {
@@ -63,9 +78,12 @@
 
 
   var processPayment = function() {
-    console.log('inside');
-    var config = buildConfig();
-    getpaidSetup(config);
+    if (orderExists === '1') {
+      var config = buildConfig();
+      getpaidSetup(config);
+    } else {
+      location.href = '<?php echo $cartUrl; ?>';
+    }
   };
 
   /** Creates element to be attached to the DOM */
@@ -86,7 +104,8 @@
 
   if ( localStorage.reviewSaved && ! processed ) {
     setTimeout(function(){ processPayment(); }, 500);
-  } else {
+  }
+  else {
     location.href = '<?php echo $cartUrl; ?>';
   }
 
@@ -94,4 +113,4 @@
 </script>
 
 <h1>Your order is pending.</h1>
-<h2>Loading payment gateway...</h2>
+<h2 id="status-text">Loading payment gateway...</h2>
