@@ -13,7 +13,7 @@
     }
 
     public function handlerAction() {
-      $paymentMethod = Mage::getModel('ravecheckout/paymentmethod');
+      $paymentMethod = Mage::getModel('ravecheckout/paymentMethod');
       $secretKey = $paymentMethod->getConfigData('secret_key');
       $txRef = $this->getRequest()->get("txRef");
 

@@ -8,7 +8,7 @@
       $quote = Mage::getSingleton('checkout/session')->getQuote();
       if ( $quote ) {
         $selectedPaymentMethod = $quote->getPayment()->getMethodInstance()->getCode();
-        if ($selectedPaymentMethod == Mage::getModel('ravecheckout/paymentmethod')->getCode()) {
+        if ($selectedPaymentMethod == Mage::getModel('ravecheckout/paymentMethod')->getCode()) {
             return $name;
         }
       }

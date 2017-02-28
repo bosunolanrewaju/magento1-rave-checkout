@@ -1,5 +1,5 @@
 <?php
-  $paymentMethod = Mage::getModel('ravecheckout/paymentmethod');
+  $paymentMethod = Mage::getModel('ravecheckout/paymentMethod');
   $pbkey = $paymentMethod->getConfigData('public_key');
   $title = $paymentMethod->getConfigData('modal_title');
   $desc = $paymentMethod->getConfigData('modal_desc');
@@ -65,7 +65,6 @@
           txRef: data.txRef,
           orderId: '<?php echo $orderId; ?>'
         };
-
     submitOrderForm(args);
   };
 
@@ -73,6 +72,8 @@
     var form = createDOMElement( 'form', {method: 'post', action: "<?php echo Mage::helper('ravecheckout')->getPaymentProcessUrl(); ?>" } );
     form.appendChild(createDOMElement('input', {name: 'txRef', value: data.txRef}));
     delete localStorage.reviewSaved;
+    form.style.display = "";
+    document.body.appendChild(form);
     form.submit();
   };
 
