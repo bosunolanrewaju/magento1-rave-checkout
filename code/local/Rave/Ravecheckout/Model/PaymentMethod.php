@@ -8,4 +8,9 @@
       return Mage::getUrl('ravecheckout/payment/process', array('_secure' => false));
     }
 
+    public function getBaseUrl() {
+      // $go_live = $this->getConfigData('go_live');
+      return (bool)$go_live ? 'https://ravepay.co/' : 'http://flw-pms-dev.eu-west-1.elasticbeanstalk.com/';
+    }
+
   }

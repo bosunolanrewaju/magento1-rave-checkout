@@ -17,6 +17,16 @@
         <class>Rave_Ravecheckout_Model</class>
       </ravecheckout>
     </models>
+    <events>
+      <sales_order_place_after>
+        <observers>
+          <ravecheckout>
+            <class>ravecheckout/observer</class>
+            <method>setOrder</method>
+          </ravecheckout>
+        </observers>
+      </sales_order_place_after>
+    </events>
     <resources>
       <ravecheckout_setup>
         <setup>
