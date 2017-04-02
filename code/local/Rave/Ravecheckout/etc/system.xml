@@ -31,7 +31,7 @@
               <label>Public Key</label>
               <frontend_type>text</frontend_type>
               <comment><![CDATA[(Required) Your Pay Checkout public key. You can get it from your Rave account dashboard.]]></comment>
-              <sort_order>3</sort_order>
+              <sort_order>4</sort_order>
               <show_in_default>1</show_in_default>
               <show_in_website>1</show_in_website>
               <show_in_store>0</show_in_store>
@@ -40,7 +40,7 @@
               <label>Secret Key</label>
               <frontend_type>text</frontend_type>
               <comment><![CDATA[(Required) Your Pay Checkout secret key. You can get it from your Rave account dashboard.]]></comment>
-              <sort_order>4</sort_order>
+              <sort_order>5</sort_order>
               <show_in_default>1</show_in_default>
               <show_in_website>1</show_in_website>
               <show_in_store>0</show_in_store>
@@ -49,7 +49,7 @@
               <label>Modal Title</label>
               <frontend_type>text</frontend_type>
               <comment><![CDATA[(Optional) The title on the payment modal. Default: RAVE CHECKOUT]]></comment>
-              <sort_order>5</sort_order>
+              <sort_order>6</sort_order>
               <show_in_default>1</show_in_default>
               <show_in_website>1</show_in_website>
               <show_in_store>0</show_in_store>
@@ -58,7 +58,7 @@
               <label>Modal Description</label>
               <frontend_type>text</frontend_type>
               <comment><![CDATA[(Optional) The description on the payment modal. Default: RAVE CHECKOUT MODAL]]></comment>
-              <sort_order>6</sort_order>
+              <sort_order>7</sort_order>
               <show_in_default>1</show_in_default>
               <show_in_website>1</show_in_website>
               <show_in_store>0</show_in_store>
@@ -67,7 +67,7 @@
               <label>Modal Logo</label>
               <frontend_type>text</frontend_type>
               <comment><![CDATA[(Optional) URL to the custom logo to show on the modal. URL should include the 'http'. Default: Rave logo]]></comment>
-              <sort_order>7</sort_order>
+              <sort_order>8</sort_order>
               <show_in_default>1</show_in_default>
               <show_in_website>1</show_in_website>
               <show_in_store>0</show_in_store>
@@ -77,7 +77,7 @@
               <frontend_type>select</frontend_type>
               <source_model>ravecheckout/currency</source_model>
               <comment><![CDATA[(Optional) The currency the customer will be charged in. Default: NGN]]></comment>
-              <sort_order>8</sort_order>
+              <sort_order>10</sort_order>
               <show_in_default>1</show_in_default>
               <show_in_website>1</show_in_website>
               <show_in_store>0</show_in_store>
@@ -96,7 +96,7 @@
               <label>New order status</label>
               <frontend_type>select</frontend_type>
               <source_model>adminhtml/system_config_source_order_status_processing</source_model>
-              <sort_order>10</sort_order>
+              <sort_order>11</sort_order>
               <show_in_default>1</show_in_default>
               <show_in_website>1</show_in_website>
               <show_in_store>0</show_in_store>

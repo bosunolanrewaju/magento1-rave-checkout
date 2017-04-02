@@ -13,9 +13,11 @@
     }
 
     public function handlerAction() {
-      $paymentMethod = Mage::getModel('ravecheckout/paymentMethod');
+      $paymentMethod = Mage::getSingleton('ravecheckout/paymentMethod');
       $secretKey = $paymentMethod->getConfigData('secret_key');
       $txRef = $this->getRequest()->get("txRef");
+
+      $order = Mage::getSingleton('ravecheckout/order')->getOrder();
 
       $txn = json_decode( $this->_fetchTransaction($txRef, $secretKey) );
 
@@ -23,9 +25,11 @@
         $txref = $txn->data->tx_ref;
         $tx_ref_arr = explode('_', $txref);
         $txn_order_id = (int) $tx_ref_arr[1];
-        $orderId = Mage::getSingleton('checkout/session')->getLastRealOrderId();
-        $order = Mage::getModel('sales/order')->loadByIncrementId($orderId);
-        $order_id = (int) $order->getId();
+
+        $amount = $order->getGrandTotal();
+        $customer = $order->getCustomerEmail();
+        $orderId = (int) $order->getId();
+
         $order_amount = number_format($order->getGrandTotal(), 2);
         $tx_amount = number_format($txn->data->amount, 2);
 
@@ -34,27 +38,34 @@
                     ."Attention: New order has been placed on hold because of incorrect payment amount. Please, look into it. <br>"
                     ."Amount paid: $tx_amount <br> Order amount: $order_amount <br> Ref:</strong> $txref";
           $order->setState( Mage_Sales_Model_Order::STATE_HOLDED, true, $comment );
-        } elseif ($txn_order_id === $order->getId()) {
+        } elseif ($txn_order_id !== $orderId) {
           $comment = "<strong>Payment Successful</strong><br>"
                     ."Attention: New order has been placed on hold because payment was made for a different order. Please, look into it. <br>"
-                    ."Order id paid for: $txn_order_id <br> Current order: $order_id <br> Ref:</strong> $txref";
+                    ."Order id paid for: $txn_order_id <br> Current order: $orderId <br> Ref:</strong> $txref";
           $order->setState( Mage_Sales_Model_Order::STATE_HOLDED, true, $comment );
         } else {
           $comment = '<strong>Payment Successful</strong><br><strong>Transaction ref:</strong> ' . $txref;
           $order->setState( Mage_Sales_Model_Order::STATE_PROCESSING, true, $comment );
         }
 
-        $order->save();
-        Mage::getSingleton('checkout/session')->unsQuoteId();
-        Mage_Core_Controller_Varien_Action::_redirect('checkout/onepage/success', array('_secure' => false));
+        $redirect_url = 'checkout/onepage/success';
       } else {
-        Mage_Core_Controller_Varien_Action::_redirect('checkout/onepage/failure', array('_secure' => false));
+        $comment = '<strong>Payment Not Verified</strong><br><strong>Transaction ref:</strong> ' . $txRef;
+        $comment .= '<br>Attention: New order has been placed on hold because payment couldn\'t be confirmed. Please, verify manually. <br>';
+        $order->setState( Mage_Sales_Model_Order::STATE_HOLDED, true, $comment );
+        $redirect_url = 'checkout/onepage/failure';
       }
 
+      $order->save();
+      Mage::getSingleton('ravecheckout/order')->resetOrder();
+      Mage_Core_Controller_Varien_Action::_redirect($redirect_url, array('_secure' => false));
     }
 
     private function _fetchTransaction($txRef, $secretKey) {
-      $URL = "http://flw-pms-dev.eu-west-1.elasticbeanstalk.com/tx/verify?tx_ref=$txRef&seckey=$secretKey";
+      $paymentMethod = Mage::getSingleton('ravecheckout/paymentMethod');
+      $base_url = $paymentMethod->getBaseUrl();
+
+      $URL = $base_url . "tx/verify?tx_ref=$txRef&seckey=$secretKey";
       $ch = curl_init();
       curl_setopt($ch, CURLOPT_URL, $URL);
       curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
