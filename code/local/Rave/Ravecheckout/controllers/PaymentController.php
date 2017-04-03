@@ -19,7 +19,7 @@
 
       $txn = json_decode( $this->_fetchTransaction($txRef, $secretKey) );
 
-      if ( ! empty($txn->data) && $txn->data->status === 'successful' ) {
+      if ( ! empty($txn->data) && $this->_is_successful($txn->data) ) {
         $txref = $txn->data->tx_ref;
         $tx_ref_arr = explode('_', $txref);
         $txn_order_id = (int) $tx_ref_arr[1];
@@ -68,6 +68,10 @@
       curl_close($ch);
 
       return (! $output) ? $error : $output;
+    }
+
+    private function _is_successful($data) {
+      return $data->flwMeta->chargeResponse === '00' || $data->flwMeta->chargeResponse === '0';
     }
 
   }
