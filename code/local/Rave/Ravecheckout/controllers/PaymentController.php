@@ -54,20 +54,30 @@
     }
 
     private function _fetchTransaction($txRef, $secretKey) {
-      $URL = "http://flw-pms-dev.eu-west-1.elasticbeanstalk.com/tx/verify?tx_ref=$txRef&seckey=$secretKey";
+      $paymentMethod = Mage::getSingleton('ravecheckout/paymentMethod');
+      $base_url = $paymentMethod->getBaseUrl();
+
+      $URL = $base_url . "flwv3-pug/getpaidx/api/verify";
+      $data = http_build_query(array(
+        'tx_ref' => $txRef,
+        'SECKEY' => $secretKey
+      ));
+
       $ch = curl_init();
       curl_setopt($ch, CURLOPT_URL, $URL);
+      curl_setopt($ch, CURLOPT_POST, true);
+      curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
       curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
       curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
       curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
       curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
       curl_setopt($ch, CURLOPT_SSLVERSION, 3);
       $output = curl_exec($ch);
-      $info = curl_getinfo($ch);
+      $failed = curl_errno($ch);
       $error = curl_error($ch);
       curl_close($ch);
 
-      return (! $output) ? $error : $output;
+      return ($failed) ? $error : $output;
     }
 
     private function _is_successful($data) {
