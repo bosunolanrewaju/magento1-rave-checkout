@@ -73,7 +73,7 @@
 
   var submitOrderForm = function(data) {
     var form = createDOMElement( 'form', {method: 'post', action: "<?php echo Mage::helper('ravecheckout')->getPaymentProcessUrl(); ?>" } );
-    form.appendChild(createDOMElement('input', {name: 'txRef', value: data.txRef}));
+    form.appendChild(createDOMElement('input', {name: 'flwRef', value: data.flwRef}));
     delete localStorage.reviewSaved;
     form.style.display = "";
     document.body.appendChild(form);

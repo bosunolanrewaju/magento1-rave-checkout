@@ -15,11 +15,11 @@
     public function handlerAction() {
       $paymentMethod = Mage::getSingleton('ravecheckout/paymentMethod');
       $secretKey = $paymentMethod->getConfigData('secret_key');
-      $txRef = $this->getRequest()->get("txRef");
+      $flwRef = $this->getRequest()->get("flwRef");
 
       $order = Mage::getSingleton('ravecheckout/order')->getOrder();
 
-      $txn = json_decode( $this->_fetchTransaction($txRef, $secretKey) );
+      $txn = json_decode( $this->_fetchTransaction($flwRef, $secretKey) );
 
       if ( ! empty($txn->data) && $this->_is_successful($txn->data) ) {
         $txref = $txn->data->tx_ref;
@@ -61,13 +61,13 @@
       Mage_Core_Controller_Varien_Action::_redirect($redirect_url, array('_secure' => false));
     }
 
-    private function _fetchTransaction($txRef, $secretKey) {
+    private function _fetchTransaction($flwRef, $secretKey) {
       $paymentMethod = Mage::getSingleton('ravecheckout/paymentMethod');
       $base_url = $paymentMethod->getBaseUrl();
 
       $URL = $base_url . "flwv3-pug/getpaidx/api/verify";
       $data = http_build_query(array(
-        'tx_ref' => $txRef,
+        'flw_ref' => $flwRef,
         'SECKEY' => $secretKey
       ));
 
